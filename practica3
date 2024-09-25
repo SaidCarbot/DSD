@@ -1,0 +1,52 @@
+// De la práctica que debe contener a los 4 flipflops, es la 3
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
+
+ENTITY nano2 is
+PORT (
+    CLK,CLR,PRE,D,T:IN STD_LOGIC;
+    SEL, JK,SR: IN STD_LOGIC_VECTOR(1 DOWNTO 0);
+    SAL: INOUT STD_LOGIC_VECTOR (1 DOWNTO O)
+    );// Acá ya declare todas las salidas y entradas que usare de los 4 flipflos y del selectro para el MUX
+END ENTITY;
+
+
+ARCHITECTURE a_nano3 of nano3 is
+BEGIN
+// Colocar aquí en proceso de divisor de frecuencia de la práctica 2 que nos pasara la profesora
+PROCESS (CLK,CLR,PRE,SR,JK,T,D,SEL)
+
+IS (CLR='0') THEN
+
+SAL(1)<='0'; ---Salida Q
+SAL(0)<='1'; -- Salida NQ
+
+ELSIF (CLK 'EVENT AND CLK='1')THEN
+// ELSIF (RESING_EDGE CLK)THEN
+
+IF (PRE = '1');
+SAL(1)<='1';
+SAL(0)<='0';
+
+ELSE
+
+CASE SEL IS
+
+// para los 4 casos: SAL(1)==Q y SAL(0) == Q' === NQ
+
+WHEN "00" => //--JK, sea JK(1)==J y JK(0)==K             
+SAL(1) <=  ((NOT JK(0))AND SAL(1)) OR (JK(1)AND(NOT SAL(1)));// Tal que: Q(J,K,Q_t)= K'Q_t + JQ_t'
+SAL(0) <=  NOT((NOT JK(0))AND SAL(1)) OR (JK(1)AND(NOT SAL(1))); // Q(J,K,Q_t)= (K'Q_t + JQ_t')'
+
+WHEN "01" => // --D 
+SAL(1) <= D;
+SAL(0) <= NOT D;
+
+WHEN "10" => // --T
+SAL(1) <= T XOR SAL(1); // Tal que Q(T,Q_t)= T'Q_t+TQ_t'
+SAL(0) <= NOT(T XOR SAL(1));
+
+WHEN "11" => // --SR sea SR(1)== S y SR(0)==R
+SAL(1) <= SR(1) OR (SR(0)AND SAL(1));
+SAL(0) <= NOT(SR(1) OR (SR(0)AND SAL(1)));
+END CASE;
